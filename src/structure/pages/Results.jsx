@@ -3,6 +3,8 @@ import InfoContext from "../../contexts/InfoContext.js";
 import { Row, Col, Button, Card } from 'react-bootstrap';
 import DoughnutChart from '../../DoughnutChart.jsx';
 
+// commit check
+
 function Results() {
     const [info, setInfo] = useContext(InfoContext);
     const [loading, setLoading] = useState(true);
@@ -49,8 +51,8 @@ function Results() {
                     </Row>
                     <Row style={{ margin: '0' }}>
                         <Col style={{ textAlign: 'center' }}>
-                            <p style={{ fontSize: '8rem', paddingBottom: '0' }}>{info.sharedSongs.length}</p>
-                            <p style={{ fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Songs</p>
+                            <p style={{ color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedSongs.length}</p>
+                            <p style={{ fontWeight: 'bold', fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Songs</p>
                             <Card style={{ marginTop: '1rem', border: 'none'}}>
                                 <Button style ={{outline: 'none',
                                     boxShadow: 'none',
@@ -77,9 +79,9 @@ function Results() {
                                 )}
                             </Card>
                         </Col>
-                        <Col style={{ textAlign: 'center' }}>
-                            <p style={{ fontSize: '8rem', paddingBottom: '0' }}>{info.sharedArtists.artists.length}</p>
-                            <p style={{ fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Artists</p>
+                        <Col style={{  textAlign: 'center' }}>
+                            <p style={{  color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedArtists.artists.length}</p>
+                            <p style={{ fontWeight: 'bold', fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Artists</p>
                             <Card style={{ marginTop: '1rem', border: 'none' }}>
                                 <Button style ={{outline: 'none',
                                     boxShadow: 'none',
@@ -107,8 +109,8 @@ function Results() {
                             </Card>
                         </Col>
                         <Col style={{ textAlign: 'center' }}>
-                            <p style={{ fontSize: '8rem', paddingBottom: '0' }}>{info.sharedGenres.allSharedGenres.length}</p>
-                            <p style={{ fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Genres</p>
+                            <p style={{ color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedGenres.allSharedGenres.length}</p>
+                            <p style={{ fontWeight: 'bold', fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Genres</p>
                             <Card style={{ marginTop: '1rem', border: 'none' }}>
                                 <Button style ={{outline: 'none',
                                     boxShadow: 'none',
