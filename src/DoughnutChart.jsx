@@ -28,11 +28,8 @@ ChartJS.register(centerTextPlugin); // Register the custom plugin
 
 const DoughnutChart = (props) => {
 
-    const totalSongs = props.totalAmount;
-    const sharedSongs = props.sharedAmount;
-    const songPercent = ((sharedSongs / totalSongs) * 100).toFixed(1);
-    console.log("PERCENT", songPercent);
-
+    
+    const percentage = props.percentage;
     const data = {
         labels: props.labels,
         datasets: [
@@ -64,7 +61,7 @@ const DoughnutChart = (props) => {
             },
             centerText: {
                 display: true,
-                text: `${songPercent}%`,
+                text: `${percentage}%`,
             },
         },
     };

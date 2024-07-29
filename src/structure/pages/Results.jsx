@@ -24,17 +24,17 @@ function Results() {
         return <div>Loading...</div>;
     }
 
-    if (!info || !info.sharedSongs || !info.sharedArtists || !info.sharedGenres) {
+    if (!info || !info.sharedTracks || !info.sharedArtists || !info.sharedGenres) {
         return <div>Error loading data</div>;
     }
 
-    const matchedSongs = info.sharedSongs;
-    const matchedArtists = info.sharedArtists.artists;
-    const matchedGenres = info.sharedGenres.allSharedGenres;
+    const matchedSongs = info.sharedTracks.sharedTracksList;
+    const matchedArtists = info.sharedArtists.sharedArtistsList;
+    const matchedGenres = info.sharedGenres.sharedGenresList;
 
-    const DonutChartSongData = [info.sharedSongs.length, info.totalSongs - info.sharedSongs.length];
-    const DonutChartArtistData = [info.sharedArtists.artists.length, info.totalArtists - info.sharedArtists.artists.length];
-    const DonutChartGenreData = [info.sharedGenres.allSharedGenres.length, info.totalGenres - info.sharedGenres.allSharedGenres.length];
+    const DonutChartSongData = [info.sharedTracks.sharedTracksList.length, info.sharedTracks.uniqueTracks.length - info.sharedTracks.sharedTracksList.length];
+    const DonutChartArtistData = [info.sharedArtists.sharedArtistsList.length, info.sharedArtists.uniqueArtists.length - info.sharedArtists.sharedArtistsList.length];
+    const DonutChartGenreData = [info.sharedGenres.sharedGenresList.length, info.sharedGenres.uniqueGenres.length - info.sharedGenres.sharedGenresList.length];
 
     return (
         <>
@@ -51,7 +51,7 @@ function Results() {
                     </Row>
                     <Row style={{ margin: '0' }}>
                         <Col style={{ textAlign: 'center' }}>
-                            <p style={{ color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedSongs.length}</p>
+                            <p style={{ color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedTracks.sharedTracksList.length}</p>
                             <p style={{ fontWeight: 'bold', fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Songs</p>
                             <Card style={{ marginTop: '1rem', border: 'none'}}>
                                 <Button style ={{outline: 'none',
@@ -80,7 +80,7 @@ function Results() {
                             </Card>
                         </Col>
                         <Col style={{  textAlign: 'center' }}>
-                            <p style={{  color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedArtists.artists.length}</p>
+                            <p style={{  color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedArtists.sharedArtistsList.length}</p>
                             <p style={{ fontWeight: 'bold', fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Artists</p>
                             <Card style={{ marginTop: '1rem', border: 'none' }}>
                                 <Button style ={{outline: 'none',
@@ -109,7 +109,7 @@ function Results() {
                             </Card>
                         </Col>
                         <Col style={{ textAlign: 'center' }}>
-                            <p style={{ color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedGenres.allSharedGenres.length}</p>
+                            <p style={{ color: 'white', fontWeight: 'bold', fontSize: '8rem', paddingBottom: '0' }}>{info.sharedGenres.sharedGenresList.length}</p>
                             <p style={{ fontWeight: 'bold', fontSize: '2rem', paddingTop: '0', margin: '0', marginTop: '-2rem' }}>Genres</p>
                             <Card style={{ marginTop: '1rem', border: 'none' }}>
                                 <Button style ={{outline: 'none',
@@ -146,8 +146,7 @@ function Results() {
                         <Col className="d-flex justify-content-center align-items-center" xs={12} sm={12} md={6} lg={4} xl={4}>
                             <DoughnutChart 
                                 data={DonutChartSongData} 
-                                sharedAmount={info.sharedSongs.length} 
-                                totalAmount={info.totalSongs} 
+                                percentage={info.sharedTracks.percentage}
                                 title={"Shared Song Percentage"} 
                                 labels={['Shared Songs', 'Total Songs']}
                                 label={'# of Songs'}
@@ -156,8 +155,7 @@ function Results() {
                         <Col className="d-flex justify-content-center align-items-center" xs={12} sm={12} md={6} lg={4} xl={4}>
                             <DoughnutChart 
                                 data={DonutChartArtistData} 
-                                sharedAmount={info.sharedArtists.artists.length} 
-                                totalAmount={info.totalArtists} 
+                                percentage={info.sharedArtists.percentage}
                                 title={"Shared Artist Percentage"} 
                                 labels={['Shared Artists', 'Total Artists']}
                                 label={'# of Artists'}
@@ -166,8 +164,7 @@ function Results() {
                         <Col className="d-flex justify-content-center align-items-center" xs={12} sm={12} md={6} lg={4} xl={4}>
                             <DoughnutChart 
                                 data={DonutChartGenreData} 
-                                sharedAmount={info.sharedGenres.allSharedGenres.length} 
-                                totalAmount={info.totalGenres} 
+                                percentage={info.sharedGenres.percentage}
                                 title={"Shared Genre Percentage"} 
                                 labels={['Shared Genres', 'Total Genres']}
                                 label={'# of Genres'}

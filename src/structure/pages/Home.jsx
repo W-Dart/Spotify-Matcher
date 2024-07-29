@@ -23,7 +23,6 @@ function Home() {
 
     const navigate = useNavigate();
    
-
      // Initialize API Token
      useEffect(()=> {
         fetch("https://accounts.spotify.com/api/token", {
@@ -48,16 +47,11 @@ function Home() {
             const data = await FetchSongs(userOne, userTwo, token, setOverwhelmed);
             const results = await MatchData(data, token);
             return results;
-        } catch (error) {
+        } catch {
             alert(error.message);
             setInvalid(true);
-
         }
-        
-        
     }
-
-  
 
     function handleClick(resultData) {
         console.log("Setting info:", resultData);
@@ -67,7 +61,6 @@ function Home() {
         if (!invalid) {
             navigate('/results');
         }
-        
     }
 
     return (
@@ -112,8 +105,6 @@ function Home() {
                             
                             const resultData = await getInfo(usernameOne.current.value, usernameTwo.current.value, token);
                             handleClick(resultData);
-                            
-                            
                             
                         }}
                     >

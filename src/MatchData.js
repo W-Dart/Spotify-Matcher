@@ -1,189 +1,190 @@
 const MatchData = async (data, sessionToken) => {
+
+    // Global variables
     const userOneData = data.userOneSongs;
     const userTwoData = data.userTwoSongs;
-
     const token = sessionToken;
 
-    console.log('User One Data:', userOneData);
-    console.log('User Two Data:', userTwoData);
+    const userOneTracks = filterData(userOneData); // remove duplicate songs
+    const userTwoTracks = filterData(userTwoData); // remove duplicate songs
+    const sharedTracks = getSharedTracks(); // song objects list
+    const sharedArtists = getSharedArtists(); // object of shared artists objects list and shared percentage
+    const sharedGenres = await getSharedGenres(); // object of shared Genre string list and shared percentage
 
-    const sharedSongs = getSharedSongs(userOneData, userTwoData);
-    console.log('SHARED SONGS', sharedSongs)
-    const sharedArtists = getSharedArtists(userOneData, userTwoData);
-    const genreMatches = await getSharedGenres(sharedArtists.artists);
+    console.log("hhhhhhhhhhhhhh",userOneTracks);
+    console.log("hhhhhhhhhhhhhh", userTwoTracks);
+    console.log(sharedTracks);
+    console.log(sharedArtists);
+    console.log(sharedGenres);
 
-    const totalSongs = userOneData.length + userTwoData.length;
-    const totalArtists = JSON.parse(JSON.stringify(totalSongs));
+    function filterData(userData) {
+        const userTracks = userData.filter(Boolean);
+        const userTrackSet = [...new Set(userTracks)];
 
-
-    function getSharedSongs(userOneData, userTwoData) {
-        const hashMap = new Map();
-        userOneData.forEach((track, index) => {
-            if (track) {
-                hashMap.set(track.name, true);
-            } else {
-                console.log(`Skipping an entry in userOneData at index ${index} for a null song:`, track);
-            }
-        });
-
-        const nameMatches = userTwoData.filter((track, index) => {
-            if (track && track.name) {
-                return hashMap.has(track.name);
-            } else {
-                console.log(`Skipping an entry in userTwoData at index ${index} for a null song:`, track);
-                return false;
-            }
-        });
-
-        return nameMatches;
-    }
-
-    function getSharedArtists(userOneData, userTwoData) {
-        const hashMap = new Map();
-        userOneData.forEach((track) => {
-            if (track) {
-                hashMap.set(track.artists[0].id, track.artists[0]);
-            } else {
-                console.log("Skipping an entry in userOneData for a null song");
-            }
-        });
-
-        const artistMatches = userTwoData.filter((track) => {
-            if (track && track.artists[0].id) {
-                return hashMap.has(track.artists[0].id);
-            } else {
-                console.log("Skipping an entry in userTwoData for a null song");
-                return false;
-            }
-        });
-        const artistMatchNames = artistMatches.map(match => match.artists[0].name);
-        const topArtists = getTopThreeElements(artistMatchNames);
-
-        const artistList = [];
-        const artistNamesSet = new Set();
-
-        artistMatches.forEach(match => {
-            const artist = match.artists[0];
-            if (!artistNamesSet.has(artist.name)) {
-                artistList.push(artist);
-                artistNamesSet.add(artist.name);
-            }
-        });
-
-        return {artists: artistList, topThreeArtists: topArtists}
-            
-    }
-
-    function getTopThreeElements(arr) {
+        function getUniqueTracksByTrackName(tracks) {
+            const seenTracksNames = new Set();
+            const uniqueTracks = [];
         
-        const countMap = new Map();
-        arr.forEach(item => {
-            countMap.set(item, (countMap.get(item) || 0) + 1);
-        });
-    
-        const sortedElements = [...countMap.entries()].sort((a, b) => b[1] - a[1]);
-        const topThree = sortedElements.slice(0, 3).map(entry => entry[0]);
-    
-        return topThree;
-    }
-
-    // FOR GETTING GENRE FROM FURTHER ARTIST DATA
-    // GENRE FUNCTIONS START
-    async function getSharedGenres(sharedArtists) {
-        console.log('YIPEEEEE', sharedArtists);
-        const results = await getArtistDetails(sharedArtists);
-        const genreLists = results.flatMap(result => result.artists.flatMap(artist => {
-            if (artist && artist.genres) {
-                return artist.genres;
-            }
-        }));
-
-        const topGenres = getTopThreeElements(genreLists);
-        console.log("Top three genres: ", topGenres);
-
-        const allGenres = [];
-        for (let i = 0; i < genreLists.length; i++) {
-            if (!allGenres.includes(genreLists[i])) {
-                allGenres.push(genreLists[i]);
-            }
-        }
-
-        
-        return {topThreeGenres: topGenres, allSharedGenres: allGenres};
-    }
-
-    async function fetchAllArtistData(endpoint) {
-        try {
-            const response = await fetch("https://api.spotify.com/v1/artists?ids=" + endpoint, {
-                method: 'GET',
-                headers: {
-                    "Authorization": "Bearer " + token
-                },
+            tracks.forEach(track => {
+                const trackName = track.name; 
+                if (trackName && !seenTracksNames.has(trackName)) {
+                    seenTracksNames.add(trackName);
+                    uniqueTracks.push(track);
+                }
             });
-            const data = await response.json();
-            console.log("HERE", data);
-            return data;
-        } catch (error) {
-            console.error('Error fetching artist data:', error);
+    
+            return uniqueTracks;
+        }
+
+        return getUniqueTracksByTrackName(userTrackSet);
+    }
+    
+    function getSharedTracks() {
+        const set = new Set(userOneTracks.map(track => track.name));
+        const sharedTracksList = userTwoTracks.filter(track => set.has(track.name));
+
+        // get total unique tracks
+        const uniqueTracks = [...new Set((userOneTracks.map(track => track.name)).concat(userTwoTracks.map(track => track.name)))];
+
+        // get percentage
+        const percentage = ((sharedTracksList.length / uniqueTracks.length) * 100).toFixed(1);
+
+        return {
+            sharedTracksList: sharedTracksList,
+            percentage: percentage,
+            uniqueTracks: uniqueTracks
+        };
+    }
+    
+    function getSharedArtists() {
+
+        function getUniqueArtistsByArtistName(artists) {
+            const seenArtistNames = new Set();
+            const uniqueArtists = [];
+        
+            artists.forEach(artist => {
+                const artistName = artist.name; 
+        
+                if (artistName && !seenArtistNames.has(artistName)) {
+                    seenArtistNames.add(artistName);
+                    uniqueArtists.push(artist);
+                }
+            });
+    
+            return uniqueArtists;
+        }
+
+        function getSharedArtistsByArtistName(artistsOne, artistsTwo) {
+            const artistsOneNames = new Set(artistsOne.map(artist => artist.name));
+            const sharedArtistsNames = new Set();
+            const sharedArtists = new Set();
+
+            artistsTwo.forEach(artist => {
+                const artistName = artist.name;
+                if (artistName && artistsOneNames.has(artistName) && !sharedArtistsNames.has(artistName)) {
+                    sharedArtistsNames.add(artistName);
+                    sharedArtists.add(artist);
+                }
+            });
+
+            return [...sharedArtists];
+        }
+        
+        // get all unique artists from both users
+        const userOneArtists = getUniqueArtistsByArtistName(userOneTracks.map(track => track.artists[0]));
+        const userTwoArtists = getUniqueArtistsByArtistName(userTwoTracks.map(track => track.artists[0]));
+
+        // get total unique artists
+        const uniqueArtists = [...new Set((userOneArtists.map(artist => artist.name)).concat(userTwoArtists.map(artist => artist.name)))];
+    
+        // get shared unique artists
+        const sharedArtistsList = getSharedArtistsByArtistName(userOneArtists, userTwoArtists);
+       
+        // get percentage
+        const percentage = ((sharedArtistsList.length / uniqueArtists.length) * 100).toFixed(1)
+        
+        return {
+            sharedArtistsList: sharedArtistsList,
+            percentage: percentage,
+            uniqueArtists: uniqueArtists
         }
     }
 
-    function chunkArray(array, chunkSize) {
-        const result = [];
-        for (let i = 0; i < array.length; i += chunkSize) {
-            result.push(array.slice(i, i + chunkSize));
-        }
-        return result;
-    }
+    async function getSharedGenres() {
+        // get all unique artists details from each user
+        const userOneArtists = [...new Set(userOneTracks.map(track => track.artists[0]))];
+        const userTwoArtists = [...new Set(userTwoTracks.map(track => track.artists[0]))];
 
-    async function getArtistDetails(artists) {
-        const endpoints = artists.map(artist => {
-            if (artist && artist.id) {
-                return artist.id;
-            } 
-        })
-        const chunkedEndpoints = chunkArray(endpoints, 50);
+        // Get all unique genres from each user
+        const userOneGenres = [...new Set((await getArtistDetails(userOneArtists)).flatMap(item => item.artists).flatMap(item => item.genres))];
+        const userTwoGenres = [...new Set((await getArtistDetails(userTwoArtists)).flatMap(item => item.artists).flatMap(item => item.genres))];
 
-        const fetchPromises = chunkedEndpoints.map(chunk => {
-            const batch = chunk.join(',');
-            return fetchAllArtistData(batch);
-        });
-
-        const allResults = await Promise.all(fetchPromises);
-        return allResults;
-    }
-    /// GENRE FUNCTIONS END
-
+        // Get total unique genres
+        const uniqueGenres = [...new Set(userOneGenres.concat(userTwoGenres))];
+      
+        // Get shared genres
+        const set = new Set(userOneGenres);
+        const sharedGenresList = userTwoGenres.filter(genre => set.has(genre));
    
+        // Get shared percentage
+        const percentage = ((sharedGenresList.length / uniqueGenres.length) * 100).toFixed(1);
+      
 
-    console.log('SHARED ARTISTS', sharedArtists);
-    console.log('GENRE MATCHES', genreMatches);
+        async function getArtistDetails(artists) {
+            const endpoints = artists.map(artist => {
+                if (artist && artist.id) {
+                    return artist.id;
+                } 
+            })
+            const chunkedEndpoints = chunkArray(endpoints, 50);
+    
+            const fetchPromises = chunkedEndpoints.map(chunk => {
+                const batch = chunk.join(',');
+                return fetchAllArtistData(batch);
+            });
+    
+            const allResults = await Promise.all(fetchPromises);
+            return allResults;
+        }
 
-    async function getUserGenres(userData) {
-     
-        const artists = userData.map(track => {
-            if (track) {
-                return track.artists[0];
+        function chunkArray(array, chunkSize) {
+            const result = [];
+            for (let i = 0; i < array.length; i += chunkSize) {
+                result.push(array.slice(i, i + chunkSize));
             }
-        })
+            return result;
+        }
 
-        const details = await getSharedGenres(artists);
-        return details;
+        async function fetchAllArtistData(endpoint) {
+            try {
+                const response = await fetch("https://api.spotify.com/v1/artists?ids=" + endpoint, {
+                    method: 'GET',
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                });
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching artist data:', error);
+            }
+        }
+
+        return {
+            sharedGenresList: sharedGenresList,
+            percentage: percentage,
+            uniqueGenres: uniqueGenres
+        }
     }
+    
 
-    const userOneGenres = await getUserGenres(userOneData);
-    const userTwoGenres = await getUserGenres(userTwoData);
-    const allGenres = userOneGenres.allSharedGenres.length + userTwoGenres.allSharedGenres.length;
-  
-
+    
     return {
-        sharedSongs: sharedSongs,
+        sharedTracks: sharedTracks,
         sharedArtists: sharedArtists,
-        sharedGenres: genreMatches,
-        totalSongs: totalSongs,
-        totalArtists: totalArtists,
-        totalGenres: allGenres
+        sharedGenres: sharedGenres
     }
+        
 }
 
 export default MatchData;
