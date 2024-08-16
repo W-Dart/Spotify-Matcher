@@ -9,8 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import FetchSongs from "../../FetchSongs.js";
 
 function Home() {
-    const CLIENT_ID = "94107853945547cd960095669b080e7f";
-    const CLIENT_SECRET = "033f7acb4df14dd5864901c9c5c1669b";
+    const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+    const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
     const [token, setToken] = useState('');
 
     const { usernameOne, usernameTwo } = useContext(UsernameContext);
