@@ -11,8 +11,8 @@ const MatchData = async (data, sessionToken) => {
     const sharedArtists = getSharedArtists(); // object of shared artists objects list and shared percentage
     const sharedGenres = await getSharedGenres(); // object of shared Genre string list and shared percentage
 
-    console.log("hhhhhhhhhhhhhh",userOneTracks);
-    console.log("hhhhhhhhhhhhhh", userTwoTracks);
+    console.log("User One Tracks",userOneTracks);
+    console.log("User Two Tracks", userTwoTracks);
     console.log(sharedTracks);
     console.log(sharedArtists);
     console.log(sharedGenres);
