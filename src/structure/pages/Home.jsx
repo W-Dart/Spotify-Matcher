@@ -25,6 +25,7 @@ function Home() {
    
      // Initialize API Token
      useEffect(()=> {
+        
         fetch("https://accounts.spotify.com/api/token", {
             method: 'POST',
             headers: {

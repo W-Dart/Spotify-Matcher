@@ -154,7 +154,7 @@ const MatchData = async (data, sessionToken) => {
             }
             return result;
         }
-
+         /*
         async function fetchAllArtistData(endpoint) {
             try {
                 const response = await fetch("https://api.spotify.com/v1/artists?ids=" + endpoint, {
@@ -169,6 +169,36 @@ const MatchData = async (data, sessionToken) => {
                 console.error('Error fetching artist data:', error);
             }
         }
+        */
+        // Credit chat gpt for heping with rate limiting and backoff strategy to fix too many requests error from the Spotify API
+        async function fetchAllArtistData(endpoint) {
+            try {
+                const response = await fetch("https://api.spotify.com/v1/artists?ids=" + endpoint, {
+                    method: 'GET',
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                });
+        
+                if (response.status === 429) { // Too Many Requests
+                    const retryAfter = response.headers.get('Retry-After') || 1; // Default to 1 second if not provided
+                    console.warn(`Rate limit exceeded. Waiting for ${retryAfter} seconds...`);
+                    await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+                    return fetchAllArtistData(endpoint); // Retry the request
+                }
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+        
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching artist data:', error);
+                return null; // Return null on error
+            }
+        }
+        
 
         return {
             sharedGenresList: sharedGenresList,
