@@ -17,10 +17,10 @@ function App() {
  
       <BrowserRouter>
         <Routes>
-          <Route path="/Spotify-Matcher" element={<Layout/>}>
+          <Route path="/Spotify-Matcher/" element={<Layout/>}>
             <Route index element={<Home />} />
-            <Route path="/about" element={<About/>}></Route>
-            <Route path="/results" element={<Results/>}></Route>
+            <Route path="/Spotify-Matcher/about" element={<About/>}></Route>
+            <Route path="/Spotify-Matcher/results" element={<Results/>}></Route>
             <Route path="*" element={<NoMatch />} />
           </Route>
         </Routes>

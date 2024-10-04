@@ -24,9 +24,9 @@ function Layout() {
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/Spotify-Matcher">Home</Nav.Link>
                         {info && info.sharedArtists && (
-                             <Nav.Link as={Link} to="results">Results</Nav.Link>
+                             <Nav.Link as={Link} to="/Spotify-Matcher/results">Results</Nav.Link>
                         )}
-                        <Nav.Link as={Link} to="about">About</Nav.Link>
+                        <Nav.Link as={Link} to="/Spotify-Matcher/about">About</Nav.Link>
                     </Nav>
                 </Container>
             </Navbar>
