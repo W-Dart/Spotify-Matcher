@@ -60,7 +60,7 @@ function Home() {
         sessionStorage.setItem('info', JSON.stringify(resultData));
         setDataLoading(false);
         if (!invalid) {
-            navigate('/results');
+            navigate('/Spotify-Matcher/results');
         }
     }
 
