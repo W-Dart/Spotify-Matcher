@@ -17,7 +17,7 @@ function App() {
  
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout/>}>
+          <Route path="/Spotify-Matcher" element={<Layout/>}>
             <Route index element={<Home />} />
             <Route path="/about" element={<About/>}></Route>
             <Route path="/results" element={<Results/>}></Route>
