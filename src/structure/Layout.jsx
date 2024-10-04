@@ -15,7 +15,7 @@ function Layout() {
     }, [info]);
 
     const location = useLocation();
-    const isResultsPage = location.pathname === '/results';
+    const isResultsPage = location.pathname === '/Spotify-Matcher/results';
 
     return (
         <div>
